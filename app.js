@@ -1,8 +1,11 @@
+require("dotenv").config();
+
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const chalk = require("chalk");
 const MongoClient = require("mongodb").MongoClient;
 
 const websitesRouter = require("./routes/websites");
@@ -11,6 +14,8 @@ const DB_NAME = process.env.DB_NAME || "cicewebsites";
 const DB_URL = `mongodb://${process.env.DB_URL || "localhost:27018"}`;
 
 const app = express();
+
+const log = console.log;
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -41,12 +46,14 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(PORT, () => {
+  log(chalk.bgGreenBright(`Server up at ${PORT}`));
+
   MongoClient.connect(
     DB_URL,
     function(err, client) {
       if (err) throw err;
 
-      console.log("Connected successfully to server");
+      log(chalk.bgGreenBright(`MongoDB up at ${DB_URL}`));
 
       const db = client.db(DB_NAME);
 
