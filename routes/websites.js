@@ -16,16 +16,18 @@ router.get("/list", (req, res) => {
 router.post("/create", async (req, res) => {
   // Recojo los params de la petición (cuerpo)
   const urlWeb = req.body.url;
+  const titleWeb = req.body.title;
 
   const insertion = await dbClient
     .insertOne({
-      url: urlWeb
+      url: urlWeb,
+      title: titleWeb
     })
     .catch(err => res.status(500).json({ error: err.message }));
 
   return res.status(201).json({
     url: urlWeb,
-    title: "Una web ueva"
+    title: titleWeb
   });
 });
 
