@@ -16,8 +16,10 @@
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
+    "jimp": "^0.5.4",
     "mongodb": "^3.1.6",
     "morgan": "~1.9.0",
-    "scrap": "^0.1.0"
+    "scrap": "^0.1.0",
+    "url-to-image": "^1.0.0"
   }
 }

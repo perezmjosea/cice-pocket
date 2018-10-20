@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const scrap = require("scrap");
+const path = require("path");
+const urlToImage = require('url-to-image');
+const jimp = require('jimp');
 
 let dbClient = null;
 
@@ -32,19 +35,33 @@ router.post("/create", async (req, res) => {
     const metaDescription = Object.keys($metas).filter(item => $metas[item].attribs && $metas[item].attribs.name && $metas[item].attribs.name.toLowerCase() === "description");
     const descriptionScrap = $metas[metaDescription].attribs.content;
 
+    // Crear screenshot
+    const imageName = `image-${new Date().getTime()}.png`;
+    const pathToSave = path.resolve(__basepath, "public", "images", imageName);
+    const pathToSaveOptimized = path.resolve(__basepath, "public", "images", "optimized", imageName);
+    const imageUrl = `images/optimized/${imageName}`;
+
+    await urlToImage(urlWeb, pathToSave).catch(err => res.status(500).send());
+
+    const rawImage = await jimp.read(pathToSave);
+
+    await rawImage.resize(450, jimp.AUTO).crop(0, 0, 450, 300).quality(80).writeAsync(pathToSaveOptimized);
+
     // Creamos el documento
     const insertion = await dbClient
       .insertOne({
         url: urlWeb,
         title: titleScrap,
-        description: descriptionScrap
+        description: descriptionScrap,
+        image: imageUrl
       })
       .catch(err => res.status(500).json({ error: err.message }));
 
     return res.status(201).json({
       url: urlWeb,
       title: titleScrap,
-      description: descriptionScrap
+      description: descriptionScrap,
+      image: imageUrl
     });
   });
 
