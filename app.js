@@ -9,12 +9,14 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const chalk = require("chalk");
 const cors = require("cors");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 
 const websitesRouter = require("./routes/websites");
-const PORT = process.env.PORT || 3001;
-const DB_NAME = process.env.DB_NAME || "cicewebsites";
+const PORT = process.env.PORT || 3003;
+const DB_NAME = process.env.DB_NAME || "cicepocket";
+
+// const DB_URL = `mongodb://${process.env.DB_URL || "localhost:27017"}`;
 const DB_URL = `mongodb://${process.env.DB_URL || "localhost:27018"}`;
 
 const app = express();
@@ -36,12 +38,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/website", websitesRouter.router);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -52,14 +54,14 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(PORT, () => {
-  log(chalk.bgGreenBright(`Server up at ${PORT}`));
+  log(chalk.cyan(`Server up at ${PORT}`));
 
   MongoClient.connect(
     DB_URL,
-    function (err, client) {
+    function(err, client) {
       if (err) throw err;
 
-      log(chalk.bgGreenBright(`MongoDB up at ${DB_URL}`));
+      log(chalk.cyan(`MongoDB up at ${DB_URL}`));
 
       const db = client.db(DB_NAME);
 
